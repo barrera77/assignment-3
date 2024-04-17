@@ -1,4 +1,4 @@
-import { getRequest } from "./api/requests";
+import { getRequest, postRequest } from "./api/requests";
 
 const url = "https://661a03c6125e9bb9f29b2c25.mockapi.io/api/v1/albums";
 const favoritesTab = document.querySelector("#favorites-tab");
@@ -104,28 +104,33 @@ function searchAlbumOrArtist(searchCriteria) {
 
 //Render search results
 function renderAlbumSearch(searchCriteria) {
+  const container = albumsList.cloneNode(true);
+
   try {
     albumsList.innerHTML = ""; //Clear container
 
     if (searchCriteria.length > 0) {
-      searchCriteria.forEach((album) => {
-        const albumtemplate = `
+      searchCriteria.forEach(
+        ({ albumName, averageRating, artistName, uid }) => {
+          const albumtemplate = `
         <li
         class="list-group-item d-flex justify-content-between align-items-start"
       >
         <div class="ms-2 me-auto">
           <div class="fw-bold">
-            ${album.albumName}
-            <span class="badge bg-primary rounded-pill">${album.averageRating}</span>
+            ${albumName}
+            <span class="badge bg-primary rounded-pill">${averageRating}</span>
           </div>
-          <span>${album.artistName}</span>
+          <span>${artistName}</span>
         </div>
-        <button data-uid="${album.uid}" type="button" class="btn btn-success btn-add-favorites">
+        <button data-uid="${uid}" type="button" class="btn btn-success btn-add-favorites">
           Add to Favorites
         </button>
       </li>`;
-        albumsList.innerHTML += albumtemplate;
-      });
+          container.insertAdjacentHTML("afterbegin", albumtemplate);
+        }
+      );
+      document.querySelector("#albums-list").replaceWith(container);
     }
   } catch (error) {
     console.error(error);
