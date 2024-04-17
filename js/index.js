@@ -5,13 +5,35 @@ const searchButtton = document.querySelector("#search-button");
 const favoritesButtton = document.querySelector("#favorites-button");
 const searchForm = document.querySelector("#search-form");
 const query = document.querySelector("#query");
+const invalidInput = document.querySelector("#invalid-input");
+const albumsList = document.querySelector("#albums-list");
+const messageContainer = document.querySelector("#message-container");
 
-async function appInit() {
+/* async function appInit() {
   const res = await fetch(url);
   const payload = await res.json();
   console.log(payload);
+} */
+
+//fetch album data
+async function fetchAlbumData() {
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("No data found");
+    }
+    const data = await response.json();
+
+    console.table(data); //Log Data for verification purposes
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
-appInit();
+
+//create fetched data backup
+const albumStore = await fetchAlbumData();
 
 /*TASK 1*/
 
@@ -41,14 +63,100 @@ query.addEventListener("input", onHandleQueryAlbumInput);
 
 function onSubmitAlbumSearch(e) {
   e.preventDefault();
-  //isSuccess();
+  isSuccess();
 }
 
-function onHandleQueryAlbumInput() {}
-
+//Validate input fields
 function validateInputFields() {
   const albumInput = query.value.toLowerCase().trim();
 
   if (albumInput === "") {
+    invalidInput.classList.add("d-flex");
+    invalidInput.classList.remove("d-none");
+  } else {
+    invalidInput.classList.remove("d-flex");
+    invalidInput.classList.add("d-none");
   }
+  return albumInput;
+}
+
+//Handle warnings on input event
+function onHandleQueryAlbumInput() {
+  if (albumInput.value) {
+    invalidInput.classList.remove("d-flex");
+    invalidInput.classList.add("d-none");
+  }
+}
+
+//search for the album title/artist name using filter function
+function searchAlbumOrArtist(searchCriteria) {
+  if (!searchCriteria) {
+    return [];
+  }
+  const query = searchCriteria;
+
+  const results = albumStore.filter((album) => {
+    if (album.albumName.toLowerCase().includes(query)) {
+      return album;
+    }
+    if (album.artistName.toLowerCase().includes(query)) {
+      return album;
+    }
+  });
+  if (results.length === 0) {
+    displaySearchNullMessage();
+  }
+  return results;
+}
+
+//Render search results
+function renderAlbumSearch(searchCriteria) {
+  try {
+    albumsList.innerHTML = "";
+    if (searchCriteria.length > 0) {
+      searchCriteria.forEach((album) => {
+        const albumtemplate = `
+        <li
+        class="list-group-item d-flex justify-content-between align-items-start"
+      >
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">
+            ${album.albumName}
+            <span class="badge bg-primary rounded-pill">${album.averageRating}</span>
+          </div>
+          <span>${album.artistName}</span>
+        </div>
+        <button data-uid="${album.uid}" type="button" class="btn btn-success">
+          Add to Favorites
+        </button>
+      </li>`;
+        albumsList.innerHTML += albumtemplate;
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function isSuccess() {
+  const albumlInput = validateInputFields();
+
+  let albumResults = [];
+
+  //filter only by album or artist
+  if (albumlInput) {
+    messageContainer.innerHTML = ""; //Clear null search msg if present
+
+    albumResults = searchAlbumOrArtist(albumlInput);
+    renderAlbumSearch(albumResults);
+  }
+}
+
+function displaySearchNullMessage() {
+  const displayNullSearchMsg = `
+          <div id="null-search-message" class="d-flex mx-3">
+            <h1>No albums found!!</h1>
+          </div>
+          `;
+  messageContainer.innerHTML = displayNullSearchMsg;
 }

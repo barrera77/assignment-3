@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@tailwindcss/forms": "^0.5.7",
+		"bootstrap-icons": "^1.11.3",
 		"nanoid": "^5.0.7",
 		"splendid-ui": "^0.11.0-alpha.4"
 	}
