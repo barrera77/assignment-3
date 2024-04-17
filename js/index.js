@@ -178,19 +178,22 @@ function displaySearchNullMessage() {
 let myFavourites = [];
 
 function addFavouriteAlbums(albumUid) {
-  if (myFavourites.includes(albumUid)) {
+  if (!myFavourites.includes(albumUid)) {
     feedbackContainer.innerHTML = "";
 
     myFavourites.push(albumUid);
-    console.log(myFavourites);
+    console.log("Added to favorites:", albumUid);
   } else {
     createFeedbackMessage();
   }
+  myFavourites.forEach((album) => {
+    console.log(album);
+  });
 }
 
 function createFeedbackMessage() {
-  feedbckContainer.innerHTML = `
-    <p class="m-auto">Album already in the list!!!</p>
-  
-  `;
+  feedbackContainer.innerHTML = `
+  <div class="alert alert-warning p-2 text-dark fw-bold">
+  <p class="m-auto">Album already in the list!!!</p>
+</div>`;
 }
