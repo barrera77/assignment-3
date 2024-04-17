@@ -10,6 +10,7 @@ const albumsList = document.querySelector("#albums-list");
 const messageContainer = document.querySelector("#message-container");
 const feedbackContainer = document.querySelector("#feedback-container");
 const btnAddFavourites = document.querySelector("#btn-add-favorites");
+const myAlbums = document.querySelector("#my-albums");
 
 /* async function appInit() {
   const res = await fetch(url);
@@ -42,6 +43,10 @@ const albumStore = await fetchAlbumData();
 //Switch to Favorites Tab
 favoritesButtton.addEventListener("click", (event) => {
   event.preventDefault();
+
+  //Render favorite albums
+  renderFavouriteAlbums();
+
   favoritesTab.classList.remove("d-none");
   searchTab.classList.add("d-none");
 
@@ -114,7 +119,8 @@ function searchAlbumOrArtist(searchCriteria) {
 //Render search results
 function renderAlbumSearch(searchCriteria) {
   try {
-    albumsList.innerHTML = "";
+    albumsList.innerHTML = ""; //Clear container
+
     if (searchCriteria.length > 0) {
       searchCriteria.forEach((album) => {
         const albumtemplate = `
@@ -167,9 +173,9 @@ function isSuccess() {
 
 function displaySearchNullMessage() {
   const displayNullSearchMsg = `
-          <div id="null-search-message" class="d-flex mx-3">
-            <h1>No albums found!!</h1>
-          </div>
+  <div>
+    <h2>No albums found!!</h2>
+  </div>
           `;
   messageContainer.innerHTML = displayNullSearchMsg;
 }
@@ -178,22 +184,73 @@ function displaySearchNullMessage() {
 let myFavourites = [];
 
 function addFavouriteAlbums(albumUid) {
-  if (!myFavourites.includes(albumUid)) {
+  const album = albumStore.find((album) => album.uid === albumUid);
+
+  if (album && !myFavourites.some((favAlbum) => favAlbum.uid === albumUid)) {
     feedbackContainer.innerHTML = "";
 
-    myFavourites.push(albumUid);
-    console.log("Added to favorites:", albumUid);
+    myFavourites.push(album);
+    console.log("Added to favorites:", album);
   } else {
     createFeedbackMessage();
   }
   myFavourites.forEach((album) => {
-    console.log(album);
+    console.log("Array contains:", album);
   });
 }
 
 function createFeedbackMessage() {
   feedbackContainer.innerHTML = `
-  <div class="alert alert-warning p-2 text-dark fw-bold">
+  <div class="alert alert-warning p-2 text-dark fw-bold w-75">
   <p class="m-auto">Album already in the list!!!</p>
 </div>`;
+}
+
+/*TASK 4*/
+
+//Render favourite albums when changing tabs
+function renderFavouriteAlbums() {
+  try {
+    myAlbums.innerHTML = ""; //Clear container
+
+    if (myFavourites.length > 0) {
+      myFavourites.forEach((album) => {
+        const albumtemplate = `
+        <li
+        class="list-group-item d-flex justify-content-between align-items-start"
+      >
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">
+            ${album.albumName}
+            <span class="badge bg-primary rounded-pill">${album.averageRating}</span>
+          </div>
+          <span>${album.artistName}</span>
+        </div>
+        <button data-uid="${album.uid}" type="button" class="btn btn-success btn-add-favorites">
+          Add to Favorites
+        </button>
+      </li>`;
+        myAlbums.innerHTML += albumtemplate;
+      });
+    } else {
+      myAlbums.innerHTML += `
+      <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+    >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">
+          OK Computer
+          <span class="badge bg-primary rounded-pill">4.23</span>
+        </div>
+        <span>Radiohead</span>
+      </div>
+      <button type="button" class="btn btn-success">
+        Remove from Favorites
+      </button>
+    </li>
+      `;
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
