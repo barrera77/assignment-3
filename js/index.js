@@ -1,3 +1,5 @@
+import { getRequest } from "./api/requests";
+
 const url = "https://661a03c6125e9bb9f29b2c25.mockapi.io/api/v1/albums";
 const favoritesTab = document.querySelector("#favorites-tab");
 const searchTab = document.querySelector("#search-tab");
@@ -12,27 +14,11 @@ const feedbackContainer = document.querySelector("#feedback-container");
 const btnAddFavourites = document.querySelector("#btn-add-favorites");
 const myAlbums = document.querySelector("#my-albums");
 
-/* async function appInit() {
-  const res = await fetch(url);
-  const payload = await res.json();
-  console.log(payload);
-} */
-
 //fetch album data
 async function fetchAlbumData() {
-  try {
-    const response = await fetch(url);
+  const albumsData = await getRequest(url);
 
-    if (!response.ok) {
-      throw new Error("No data found");
-    }
-    const data = await response.json();
-
-    //console.table(data); //Log Data for verification purposes
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  return albumsData;
 }
 
 //create fetched data backup
@@ -254,3 +240,5 @@ function renderFavouriteAlbums() {
     console.error(error);
   }
 }
+
+/*TASK 5*/
