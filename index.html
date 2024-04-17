@@ -118,6 +118,10 @@
         </ul>
         <!-- SEARCH ALBUMS TAB -->
         <div id="search-tab" class="container album py-5 bg-body-tertiary">
+          <div
+            id="feedback-container"
+            class="alert alert-warning p-2 text-dark fw-bold"
+          ></div>
           <h5 class="text-dark">Search Library</h5>
           <form id="search-form">
             <div class="row">
@@ -131,8 +135,8 @@
                 />
                 <div id="invalid-input" class="invalid-feedback d-none">
                   <i class="bi bi-exclamation-triangle mx-2"></i>
-                  <label for="album-title" id="message"></label>
-                    Invalid Album Name</label
+                  <label for="album-title" id="message"
+                    >Invalid Album Name</label
                   >
                 </div>
               </div>
@@ -149,19 +153,24 @@
             <ul id="albums-list" class="list-group">
               <!-- TEMPLATE -->
               <li
-              class="list-group-item d-flex justify-content-between align-items-start"
-            >
-              <div class="ms-2 me-auto">
-                <div class="fw-bold">
-                  Name of the Album
-                  <span class="badge bg-primary rounded-pill">4.23</span>
+                class="list-group-item d-flex justify-content-between align-items-start"
+              >
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold">
+                    Name of the Album
+                    <span class="badge bg-primary rounded-pill">4.23</span>
+                  </div>
+                  <span>Artist</span>
                 </div>
-                <span>Artist</span>
-              </div>
-              <button data-uid="${uid}" type="button" class="btn btn-success">
-                Add to Favorites
-              </button>
-            </li>
+                <button
+                  data-uid="${uid}"
+                  id=""
+                  type="button"
+                  class="btn btn-success"
+                >
+                  Add to Favorites
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -183,13 +192,12 @@
                 <span>Radiohead</span>
               </div>
               <button type="button" class="btn btn-success">
-                Add to My Favorites
+                Remove from Favorites
               </button>
             </li>
           </ul>
         </div>
         <div id="message-container" class="text-black font-bold col-lg-6"></div>
-        
       </div>
     </main>
   </body>

@@ -8,6 +8,8 @@ const query = document.querySelector("#query");
 const invalidInput = document.querySelector("#invalid-input");
 const albumsList = document.querySelector("#albums-list");
 const messageContainer = document.querySelector("#message-container");
+const feedbackContainer = document.querySelector("#feedback-container");
+const btnAddFavourites = document.querySelector("#btn-add-favorites");
 
 /* async function appInit() {
   const res = await fetch(url);
@@ -25,7 +27,7 @@ async function fetchAlbumData() {
     }
     const data = await response.json();
 
-    console.table(data); //Log Data for verification purposes
+    //console.table(data); //Log Data for verification purposes
     return data;
   } catch (error) {
     throw error;
@@ -126,7 +128,7 @@ function renderAlbumSearch(searchCriteria) {
           </div>
           <span>${album.artistName}</span>
         </div>
-        <button data-uid="${album.uid}" type="button" class="btn btn-success">
+        <button data-uid="${album.uid}" type="button" class="btn btn-success btn-add-favorites">
           Add to Favorites
         </button>
       </li>`;
@@ -149,6 +151,17 @@ function isSuccess() {
 
     albumResults = searchAlbumOrArtist(albumlInput);
     renderAlbumSearch(albumResults);
+
+    const buttons = document.querySelectorAll(".btn-add-favorites");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        console.log("Button clicked");
+        let albumUid = event.target.dataset.uid;
+        console.log(albumUid);
+        addFavouriteAlbums(albumUid);
+      });
+    });
   }
 }
 
@@ -159,4 +172,25 @@ function displaySearchNullMessage() {
           </div>
           `;
   messageContainer.innerHTML = displayNullSearchMsg;
+}
+
+/* Task 3 */
+let myFavourites = [];
+
+function addFavouriteAlbums(albumUid) {
+  if (myFavourites.includes(albumUid)) {
+    feedbackContainer.innerHTML = "";
+
+    myFavourites.push(albumUid);
+    console.log(myFavourites);
+  } else {
+    createFeedbackMessage();
+  }
+}
+
+function createFeedbackMessage() {
+  feedbckContainer.innerHTML = `
+    <p class="m-auto">Album already in the list!!!</p>
+  
+  `;
 }
