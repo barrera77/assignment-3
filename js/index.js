@@ -185,7 +185,6 @@ function addFavouriteAlbums(albumUid) {
   } else {
     createFeedbackMessage();
   }
-  myFavorites.forEach((album) => {});
 }
 
 function createFeedbackMessage() {
@@ -201,7 +200,7 @@ function createFeedbackMessage() {
 function renderFavouriteAlbums() {
   const container = myAlbums.cloneNode(true);
   try {
-    myAlbums.innerHTML = ""; //Clear container
+    container.innerHTML = ""; //Clear container
 
     if (myFavorites.length > 0) {
       myFavorites.forEach(({ albumName, averageRating, artistName, uid }) => {
@@ -216,8 +215,8 @@ function renderFavouriteAlbums() {
           </div>
           <span>${artistName}</span>
         </div>
-        <button data-uid="${uid}" type="button" class="btn btn-success btn-add-favorites">
-          Add to Favorites
+        <button data-uid="${uid}" type="button" class="btn btn-success btn-remove-favorites">
+        Remove from Favorites
         </button>
       </li>`;
         container.insertAdjacentHTML("afterbegin", albumtemplate);
@@ -249,4 +248,34 @@ function renderFavouriteAlbums() {
 /*TASK 5*/
 function addNewAlbum(album) {
   postRequest(album);
+}
+
+/* Bonus TASK */
+
+function removeAlbum() {
+  const buttons = document.querySelectorAll(".btn-remove-favorites");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      let albumUid = event.target.dataset.uid;
+      removeFavouriteAlbums(albumUid);
+    });
+  });
+  const uid = e.currentTaget.dataset.uid;
+  const album = myAlbums.find((album) => album.uid === uid);
+}
+
+function removeFavouriteAlbums(albumUid) {
+  const album = albumStore.find((album) => album.uid === albumUid);
+
+  if (album && !myFavorites.some((favAlbum) => favAlbum.uid === albumUid)) {
+    feedbackContainer.innerHTML = "";
+
+    myFavorites.remove(album);
+    console.log("Removed from favorites:", album);
+
+    deleteRequest(album); //call POST request
+  } else {
+    createFeedbackMessage();
+  }
 }
