@@ -27,9 +27,9 @@ export async function postRequest(album) {
   console.log("fav", await res.json());
 }
 
-export async function deleteRequest(uid) {
+export async function deleteRequest(id) {
   const res = await fetch(
-    `https://661a03c6125e9bb9f29b2c25.mockapi.io/api/v1/favorites/${uid}`,
+    `https://661a03c6125e9bb9f29b2c25.mockapi.io/api/v1/favorites/${id}`,
     {
       method: "DELETE",
     }

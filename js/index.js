@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from "./api/requests";
+import { getRequest, postRequest, deleteRequest } from "./api/requests";
 
 const url = "https://661a03c6125e9bb9f29b2c25.mockapi.io/api/v1/albums";
 const favoritesTab = document.querySelector("#favorites-tab");
@@ -21,8 +21,20 @@ async function fetchAlbumData() {
   return albumsData;
 }
 
-//create fetched data backup
+async function fetchFavoriteAlbums() {
+  const favoriteAlbumsData = await getRequest(
+    "https://661a03c6125e9bb9f29b2c25.mockapi.io/api/v1/favorites"
+  );
+  return favoriteAlbumsData;
+}
+
+//create fetched albums data backup
 const albumStore = await fetchAlbumData();
+
+//create fetched favorite albums data backup
+const favoriteAlbumStore = await fetchFavoriteAlbums();
+
+console.log(favoriteAlbumStore);
 
 /*TASK 1*/
 
@@ -38,6 +50,8 @@ favoritesButtton.addEventListener("click", (event) => {
 
   searchButtton.classList.remove("active");
   favoritesButtton.classList.add("active");
+
+  removeAlbum();
 });
 
 //Switch to Search Tab
@@ -261,21 +275,11 @@ function removeAlbum() {
       removeFavouriteAlbums(albumUid);
     });
   });
-  const uid = e.currentTaget.dataset.uid;
-  const album = myAlbums.find((album) => album.uid === uid);
 }
 
 function removeFavouriteAlbums(albumUid) {
-  const album = albumStore.find((album) => album.uid === albumUid);
-
-  if (album && !myFavorites.some((favAlbum) => favAlbum.uid === albumUid)) {
-    feedbackContainer.innerHTML = "";
-
-    myFavorites.remove(album);
-    console.log("Removed from favorites:", album);
-
-    deleteRequest(album); //call POST request
-  } else {
-    createFeedbackMessage();
-  }
+  const album = favoriteAlbumStore.find((album) => album.uid === albumUid);
+  deleteRequest(album.id);
+  myFavorites.filter((album) => album.uid === albumUid);
+  console.log("Removed from favorites:", album);
 }
