@@ -107,7 +107,7 @@ function renderAlbumSearch(searchCriteria) {
   const container = albumsList.cloneNode(true);
 
   try {
-    albumsList.innerHTML = ""; //Clear container
+    container.innerHTML = ""; //Clear container
 
     if (searchCriteria.length > 0) {
       searchCriteria.forEach(
@@ -153,9 +153,7 @@ function isSuccess() {
 
     buttons.forEach((button) => {
       button.addEventListener("click", (event) => {
-        console.log("Button clicked");
         let albumUid = event.target.dataset.uid;
-        console.log(albumUid);
         addFavouriteAlbums(albumUid);
       });
     });
@@ -172,22 +170,22 @@ function displaySearchNullMessage() {
 }
 
 /* Task 3 */
-let myFavourites = [];
+let myFavorites = [];
 
 function addFavouriteAlbums(albumUid) {
   const album = albumStore.find((album) => album.uid === albumUid);
 
-  if (album && !myFavourites.some((favAlbum) => favAlbum.uid === albumUid)) {
+  if (album && !myFavorites.some((favAlbum) => favAlbum.uid === albumUid)) {
     feedbackContainer.innerHTML = "";
 
-    myFavourites.push(album);
+    myFavorites.push(album);
     console.log("Added to favorites:", album);
+
+    addNewAlbum(album); //call POST request
   } else {
     createFeedbackMessage();
   }
-  myFavourites.forEach((album) => {
-    console.log("Array contains:", album);
-  });
+  myFavorites.forEach((album) => {});
 }
 
 function createFeedbackMessage() {
@@ -201,28 +199,30 @@ function createFeedbackMessage() {
 
 //Render favourite albums when changing tabs
 function renderFavouriteAlbums() {
+  const container = myAlbums.cloneNode(true);
   try {
     myAlbums.innerHTML = ""; //Clear container
 
-    if (myFavourites.length > 0) {
-      myFavourites.forEach((album) => {
+    if (myFavorites.length > 0) {
+      myFavorites.forEach(({ albumName, averageRating, artistName, uid }) => {
         const albumtemplate = `
-        <li
+        <li data-uid="${uid}"
         class="list-group-item d-flex justify-content-between align-items-start"
       >
         <div class="ms-2 me-auto">
           <div class="fw-bold">
-            ${album.albumName}
-            <span class="badge bg-primary rounded-pill">${album.averageRating}</span>
+            ${albumName}
+            <span class="badge bg-primary rounded-pill">${averageRating}</span>
           </div>
-          <span>${album.artistName}</span>
+          <span>${artistName}</span>
         </div>
-        <button data-uid="${album.uid}" type="button" class="btn btn-success btn-add-favorites">
+        <button data-uid="${uid}" type="button" class="btn btn-success btn-add-favorites">
           Add to Favorites
         </button>
       </li>`;
-        myAlbums.innerHTML += albumtemplate;
+        container.insertAdjacentHTML("afterbegin", albumtemplate);
       });
+      document.querySelector("#my-albums").replaceWith(container);
     } else {
       myAlbums.innerHTML += `
       <li
@@ -247,3 +247,6 @@ function renderFavouriteAlbums() {
 }
 
 /*TASK 5*/
+function addNewAlbum(album) {
+  postRequest(album);
+}
